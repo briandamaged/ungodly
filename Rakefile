@@ -3,13 +3,14 @@
 
 require 'ungodly'
 
-namespace :god do
+namespace :my_project do
+  namespace :god do
 
-  # Create the tasks inside the :god namespace
-  Ungodly.create_tasks(
-    port:            "1256",
-    config_path:     "./workers.god",
-    managed_pid_dir: "./tmp/pids"
-  )
+    Ungodly.create_tasks(
+      port:            "1256",
+      config_path:     "./workers.god",
+      managed_pid_dir: "./tmp/pids"
+    )
 
+  end
 end
