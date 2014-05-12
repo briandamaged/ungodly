@@ -4,12 +4,31 @@ require 'rake'
 module Ungodly
   extend Rake::DSL
 
+
+  class GodCommandFailure < StandardError
+  end
+
+
+  # Helper method for invoking god commands
+  def self.invoke(args)
+    pid = Process.spawn(*args)
+    _, result = Process.wait2(pid)
+
+    s = result.exitstatus
+    if s != 0
+      raise GodCommandFailure, "god command exited with status #{s}"
+    end
+  end
+
+
   class GodManager
 
-    attr_accessor :god_path
+    attr_accessor :env, :god_path
     attr_accessor :config_path, :managed_pid_dir, :port
 
     def initialize(options = {})
+      @env             = options[:env]
+
       @god_path        = options[:god_path]
       
       @port            = options[:port]
@@ -19,6 +38,10 @@ module Ungodly
 
 
     # Helper methods for generating fragments of god commands
+    def env_param
+      (env) ? [env] : []
+    end
+
     def god_exec_param
       [god_path || "god"]
     end
@@ -39,18 +62,20 @@ module Ungodly
     # Helper methods for generating god commands
 
     def launch_cmd
-      god_exec_param + port_param + managed_pid_dir_param + config_path_param
+      env_param + god_exec_param + port_param + managed_pid_dir_param + config_path_param
     end
 
     def terminate_cmd
-      god_exec_param + port_param + ["terminate"]
+      env_param + god_exec_param + port_param + ["terminate"]
     end
 
     def status_cmd
-      god_exec_param + port_param + ["status"]
+      env_param + god_exec_param + port_param + ["status"]
     end
 
   end
+
+
 
 
   def self.create_tasks(options = {})
@@ -59,17 +84,17 @@ module Ungodly
 
     desc "Launch god and the workers"
     task :launch do
-      puts god_manager.launch_cmd
+      invoke god_manager.launch_cmd
     end
 
     desc "Terminate god and the workers"
     task :terminate do
-      puts god_manager.terminate_cmd
+      invoke god_manager.terminate_cmd
     end
 
     desc "Show the status of the god workers"
     task :status do
-      puts god_manager.status_cmd
+      invoke god_manager.status_cmd
     end
 
   end
