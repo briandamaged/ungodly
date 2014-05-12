@@ -51,7 +51,7 @@ module Ungodly
     end
 
     def managed_pid_dir_param
-      (managed_pid_dir) ? ["-managed-pid-dir", managed_pid_dir] : []
+      (managed_pid_dir) ? ["--managed-pid-dir", managed_pid_dir] : []
     end
 
     def config_path_param
