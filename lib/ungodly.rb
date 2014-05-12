@@ -47,7 +47,7 @@ module Ungodly
     end
 
     def port_param
-      (port) ? ["-p", port] : []
+      (port) ? ["-p", port.to_s] : []
     end
 
     def managed_pid_dir_param

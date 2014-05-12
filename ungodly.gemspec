@@ -1,7 +1,7 @@
 
 Gem::Specification.new do |s|
   s.name        = 'ungodly'
-  s.version     = '0.9.1'
+  s.version     = '0.9.2'
   s.date        = '2014-05-11'
   s.summary     = "Rake task generator for the God gem"
   s.description = "Rake task generator for the God gem"
